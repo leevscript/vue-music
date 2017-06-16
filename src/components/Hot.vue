@@ -1,6 +1,6 @@
 <template>
   <div>
-    <card v-for="(item,index) in topList" class="card" :key="index">
+    <div v-for="(item,index) in topList" class="card" :key="index">
       <div slot="content" class="card-item">
         <img :src="item.picUrl">
         <div class="info">
@@ -17,16 +17,16 @@
           <x-icon type="ios-arrow-right" size="16"></x-icon>
         </div>
       </div>
-    </card>
+    </div>
   </div>
 </template>
 
 <script>
-  import {Card} from 'vux'
+
 
   export default {
     components: {
-      Card
+    
     },
     data() {
       return {

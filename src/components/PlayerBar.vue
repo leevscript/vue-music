@@ -24,8 +24,8 @@
           <p class="music-singer">{{song.singer | concatSinger}}</p>
         </div>
         <div class="play-button" @click.stop="isPlay">
-          <img src="../assets/icon-play.png" v-show="!playing">
-          <img src="../assets/icon-pause.png" v-show="playing">
+          <icon name="play-circle-o" scale="3" v-show="!playing"></icon>
+          <icon name="pause-circle-o" scale="3" v-show="playing"></icon>
         </div>
       </div>
     </div>
@@ -41,18 +41,22 @@
 
       </div>
       <Lyric class="lyric" :songid="song.id" :currentTime="currentTime"></Lyric>
-      <div class="progress">
-        <div class="wrap">
-          <div class="cover-img">
-            <img v-lazy="coverImgUrl">
+      <div class="control">
+        <div class="progress">
+          <div class="current-time">
+            {{currentTime}}
           </div>
-          <div class="music-info">
-            <p class="music-name">{{song.name}}</p>
-            <p class="music-singer">{{song.singer | concatSinger}}</p>
+          <div class="progress-wrap">
+            <div class="progress-content" :style="{'width': `${progress}%`}"></div>
           </div>
+          <div class="total-time">
+            {{duration}}
+          </div>
+        </div>
+        <div class="button">
           <div class="play-button" @click.stop="isPlay">
-            <img src="../assets/icon-play.png" v-show="!playing">
-            <img src="../assets/icon-pause.png" v-show="playing">
+            <icon name="play-circle" scale="4" v-show="!playing"></icon>
+            <icon name="pause-circle" scale="4" v-show="playing"></icon>
           </div>
         </div>
       </div>
@@ -64,7 +68,7 @@
   import {mapMutations, mapState, mapGetters} from 'vuex'
   import {Alert, ColorPicker, TransferDomDirective as TransferDom} from 'vux'
 
-  import Lyric from './XLyric.vue'
+  import Lyric from './Lyric.vue'
 
   export default {
     directives: {
@@ -116,7 +120,7 @@
     },
     computed: {
       ...mapGetters([
-        'coverImgUrl', 'currentTime'
+        'coverImgUrl', 'currentTime', 'duration'
       ]),
       ...mapState({
         dataUrl (state) {
@@ -125,7 +129,13 @@
         },
         playing: state => state.PlayService.playing,
         song: state => state.PlayService.song
-      })
+      }),
+      progress() {
+        if (!this.duration || !this.currentTime) return 0
+        let ct = this.currentTime.split(':')
+        let dt = this.duration.split(':')
+        return parseInt(((parseInt(ct[0]) * 60 + parseInt(ct[1])) / (parseInt(dt[0]) * 60 + parseInt(dt[1]))) * 100)
+      }
     },
     filters: {
       concatSinger(arr) {
@@ -147,7 +157,7 @@
 <style lang="less" scoped>
   .play-control {
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
     .bg {
       position: absolute;
       left: -50%;
@@ -188,8 +198,10 @@
         }
         .play-button {
           float: right;
-          width: 3rem;
-          margin: 1rem 1rem 0 0;
+          line-height: 4rem;
+          margin-right: 1rem;
+          margin-top: 0.5rem;
+          color: #58B7FF;
         }
       }
     }
@@ -229,41 +241,50 @@
         overflow: hidden;
         flex: auto;
       }
-      .progress {
+      .control {
         position: relative;
         margin-top: 1rem;
         height: 30rem;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.3);
         overflow: hidden;
         z-index: 2;
-        .wrap {
-          position: absolute;
+        .progress {
           width: 100%;
-          height: 5rem;
-          top: 50%;
-          transform: translateY(-50%);
-          .cover-img {
+          height: 22px;
+          display: flex;
+          font-size: 0.8rem;
+          color: #C0CCDA;
+          line-height: 22px;
+          .current-time {
             width: 4rem;
-            height: 4rem;
-            overflow: hidden;
-            margin: 0.5rem 0 0 1rem;
-            float: left;
+            text-align: right;
+            padding-right: 1rem;
           }
-          .music-info {
-            float: left;
-            margin-left: 1rem;
-            .music-name {
-              line-height: 3rem;
-              font-size: 1.3rem;
-            }
-            .music-singer {
-              line-height: 1rem;
+          .total-time {
+            width: 4rem;
+            text-align: left;
+            padding-left: 1rem;
+          }
+          .progress-wrap {
+            flex: auto;
+            height: 2px;
+            position: relative;
+            background-color: #C0CCDA;
+            margin-top: 10px;
+            .progress-content {
+              height: 2px;
+              position: absolute;
+              width: 0;
+              background-color: #13CE66;
             }
           }
+        }
+        .button {
+          height: 10rem;
+          color: #fff;
           .play-button {
-            float: right;
-            width: 3rem;
-            margin: 1rem 1rem 0 0;
+            line-height: 10rem;
+            text-align: center;
           }
         }
       }

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition>
-      <router-view v-show="!controlShow"></router-view>
+      <router-view v-show="!controlShow" class="view"></router-view>
     </transition>
     <div class="control" :class="{active: controlShow}">
       <player-bar @showPlayer="showPlayer"></player-bar>
@@ -43,7 +43,6 @@
 
   #app {
     height: 100%;
-    padding-bottom: 5rem;
   }
 
  .control {

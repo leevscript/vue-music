@@ -1,6 +1,6 @@
 # music
 
-> A Vue.js project
+> 基于vue.js框架搭建的手机web端音乐播放器，感谢QQ音乐提供的开放API
 
 ## Build Setup
 

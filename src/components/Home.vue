@@ -63,7 +63,6 @@
       }
     },
     mounted() {
-
       this.minHeight = this.$refs.main.offsetHeight + 'px'
     }
   }
@@ -92,6 +91,8 @@
     .main {
       height: 100%;
       .swiper-slide {
+        background-color: #EFF2F7;
+        padding-bottom: 5rem;
         height: 0 !important;
       }
       .swiper-slide.swiper-slide-active {
