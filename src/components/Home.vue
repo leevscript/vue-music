@@ -8,13 +8,13 @@
     <div class="main" ref="main">
       <swiper :options="swiperOption" ref="swiper">
         <swiper-slide class="swiper-item" :style="{minHeight: minHeight}">
-          <Recommend></Recommend>
+          <recommend></recommend>
         </swiper-slide>
         <swiper-slide class="swiper-item" :style="{minHeight: minHeight}">
-          <Hot></Hot>
+          <hot></hot>
         </swiper-slide>
         <swiper-slide class="swiper-item" :style="{minHeight: minHeight}">
-          <Search></Search>
+          <search></search>
         </swiper-slide>
       </swiper>
     </div>
@@ -43,7 +43,6 @@
       return {
         index: 0,
         TAB_NAME: ['推荐音乐', '热歌榜', '搜索'],
-        controlShow: false,
         minHeight: 0,
         swiperOption: {
           onTransitionEnd: (swiper) => {
@@ -61,9 +60,10 @@
     methods: {
       tabClick(index) {
         this.swiper.slideTo(index)
-      },
+      }
     },
     mounted() {
+
       this.minHeight = this.$refs.main.offsetHeight + 'px'
     }
   }
@@ -71,10 +71,10 @@
 
 <style scoped lang="less">
   .home {
+    height: 100%;
     width: 100%;
     padding-top: 44px;
     position: relative;
-    flex-direction: column;
     .tab {
       position: fixed;
       width: 100%;
@@ -90,9 +90,7 @@
       }
     }
     .main {
-      width: 100%;
-      flex: 1;
-      overflow: auto;
+      height: 100%;
       .swiper-slide {
         height: 0 !important;
       }

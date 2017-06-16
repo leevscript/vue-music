@@ -20,7 +20,7 @@
           let pastLyric = []
           let i = 0
           Object.keys(this.lyric).forEach(function (key) {
-            if (key.split(':').reduce((a, b) => parseInt(a) * 60 * 100 + b.split('.').reduce((a, b) => parseInt(a) * 100 + parseInt(b))) - 120 <= that.currentTimeStamp) {
+            if (key.split(':').reduce((a, b) => parseInt(a) * 60 * 100 + b.split('.').reduce((a, b) => parseInt(a) * 100 + parseInt(b)))  <= that.currentTimeStamp) {
               if (that.lyric[key] !== '\n') pastLyric.push(that.lyric[key])
             } else if (i <= 1 && that.lyric[key] !== '\n') {
               pastLyric.push(that.lyric[key])

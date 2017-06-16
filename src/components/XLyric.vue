@@ -1,11 +1,19 @@
 <template>
   <div class="wrap"
-       @touchstart="touchstart"
-       @touchmove="touchmove"
-       @touchend="touchend"
+       @touchstart.prevent="touchstart"
+       @touchmove.prevent="touchmove"
+       @touchend.prevent="touchend"
        ref="wrap">
-    <div class="music-lyric" :style="{'top': top + 'px'}" ref="lyric" :class="{'transition': !touching}">
-      <p class="lyric-item" v-for="(v,k) in lyric" :class="{active: k === currentKey}">{{v}}</p>
+    <div class="music-lyric"
+         :style="{'transition': `-webkit-transform ${duration}ms ease-out`,
+                  'transform-origin': '0px 0px 0px',
+                  'transform': `translate3d(0px, ${top}px, 0px) scale(1)`}"
+         ref="lyric">
+      <p class="lyric-item"
+         v-for="(v,k) in lyric"
+         :class="{active: k === currentKey}">
+        {{v}}
+      </p>
     </div>
   </div>
 </template>
@@ -19,9 +27,11 @@
         lyric: {},
         keys: [],
         top: 0,
+        duration: 0,
         start: 0,
         end: 0,
-        touching: false
+        startTime: 0,
+        maxHeight: 0
       }
     },
     computed: {
@@ -55,33 +65,41 @@
             this.lyric = lyr
             this.keys = Object.keys(lyr)
             this.touching = false
-            this.top = 0
+            this.end = this.top = 0
           })
       },
       currentindex(val) {
         val = val < 2 ? 2 : val
-        this.top = -(val - 2) * 60
+        this.duration = 300
+        this.end = this.top = -(val - 2) * 50
       }
     },
     methods: {
       touchstart(e) {
-        e.preventDefault()
-        this.touching = true
+        this.duration = 0
+        this.startTime = (new Date()).getTime()
         this.start = e.changedTouches[0].pageY
+        this.maxHeight = this.$refs.lyric.offsetHeight - this.$refs.wrap.offsetHeight
       },
       touchmove(e) {
-        e.preventDefault()
         let distance = e.changedTouches[0].pageY - this.start
-        this.top = this.end + distance
+        let top = this.end + distance
+        if (top > 100) top = 100
+        if (top < -this.maxHeight - 100) top = -this.maxHeight - 100
+        this.top = top
       },
       touchend(e) {
-        e.preventDefault()
-        let maxHeight = -this.$refs.lyric.offsetHeight + this.$refs.wrap.offsetHeight
-        if (this.top > 0) this.top = 0
-        if (this.top < maxHeight) this.top = maxHeight
-        this.end = this.top
-        this.touching = false
-
+        let end = e.changedTouches[0].pageY
+        let endTime = (new Date()).getTime()
+        let distance = end - this.start
+        let difference = endTime - this.startTime
+        difference = difference > 1000 ? 1000 : difference
+        let ratio = distance / (difference * 5)
+        this.end = this.end + ratio * this.maxHeight
+        this.duration = (Math.abs(parseInt(ratio * this.maxHeight)))
+        if (this.end > 0) this.end = 0
+        if (this.end < -this.maxHeight) this.end = -this.maxHeight
+        this.top = this.end
       }
     },
     mounted() {
@@ -100,21 +118,19 @@
       position: absolute;
       left: 0;
       top: 0;
+      overflow: hidden;
       .lyric-item {
+        height: 50px;
+        line-height: 50px;
         text-align: center;
         font-size: 1.3rem;
         font-weight: 500;
         color: #D3DCE6;
-        line-height: 60px;
-        height: 60px;
         overflow: hidden;
       }
       .lyric-item.active {
         color: #13CE66;
       }
-    }
-    .music-lyric.transition {
-      transition: top 0.5s;
     }
   }
 

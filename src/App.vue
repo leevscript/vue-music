@@ -1,21 +1,21 @@
 <template>
   <div id="app">
     <transition>
-      <router-view></router-view>
+      <router-view v-show="!controlShow"></router-view>
     </transition>
     <div class="control" :class="{active: controlShow}">
-      <PlayControl @showPlayer="showPlayer"></PlayControl>
+      <player-bar @showPlayer="showPlayer"></player-bar>
     </div>
   </div>
 </template>
 
 <script>
-  import PlayControl from './components/PlayControl.vue'
+  import PlayerBar from './components/PlayerBar.vue'
 
   export default {
     name: 'app',
     components: {
-      PlayControl
+      PlayerBar
     },
     data() {
       return {
@@ -37,8 +37,12 @@
 <style>
   @import "reset.css";
 
+  html,body {
+    height: 100%;
+  }
+
   #app {
-    overflow: hidden;
+    height: 100%;
     padding-bottom: 5rem;
   }
 
