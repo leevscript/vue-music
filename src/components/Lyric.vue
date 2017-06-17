@@ -53,9 +53,9 @@
       songid(id) {
         let lyr = {}
         this.$store.dispatch('getLyric', id)
-          .then((responce) => {
+          .then((ret) => {
             Base64
-              .decode(responce.data.lyric)
+              .decode(ret.data.lyric)
               .split('[')
               .slice(5)
               .forEach(str => {
@@ -64,7 +64,6 @@
               })
             this.lyric = lyr
             this.keys = Object.keys(lyr)
-            this.touching = false
             this.end = this.top = 0
           })
       },
@@ -101,9 +100,6 @@
         if (this.end < -this.maxHeight) this.end = -this.maxHeight
         this.top = this.end
       }
-    },
-    mounted() {
-
     }
   }
 </script>

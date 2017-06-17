@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="(item,index) in topList" class="card" :key="index">
-      <div slot="content" class="card-item">
+      <router-link :to="{name:'toplist',params: { id: item.id }}" class="card-item">
         <img :src="item.picUrl">
         <div class="info">
           <p class="title" v-text="item.topTitle"></p>
@@ -16,7 +16,7 @@
         <div class="more">
           <x-icon type="ios-arrow-right" size="16"></x-icon>
         </div>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -26,7 +26,7 @@
 
   export default {
     components: {
-    
+
     },
     data() {
       return {
@@ -36,6 +36,7 @@
     created() {
       this.$store.dispatch('getRankList').then((response) => {
         this.topList = response.data.data.topList
+        console.log(response.data.data)
       })
     }
   }
@@ -43,7 +44,7 @@
 
 <style lang="less" scoped>
   .card {
-    margin: 10px !important;
+    margin: 10px;
   }
 
   .card-item {
