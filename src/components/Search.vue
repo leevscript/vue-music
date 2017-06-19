@@ -76,11 +76,12 @@
         this.$store
           .dispatch('search', val)
           .then((ret) => {
-            this.results = ret.data.data.song.list
+            this.results = ret.data.data.song.list.map(v => {
+              return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid}
+            })
           })
       },
       play (song) {
-        console.log(song)
         this.$store.commit('setPlayList', {
           index: 0,
           list: [song]

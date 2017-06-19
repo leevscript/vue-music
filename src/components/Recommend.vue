@@ -2,16 +2,17 @@
   <div class="recommend" ref="recommend">
     <swiper :options="swiperOptionIn" class="swiper-position">
       <swiper-slide v-for="(item,index) in imgList" :key="index">
-        <img :src="item.pic">
+        <img :src="item">
       </swiper-slide>
-      <div class="swiper-pagination-white swiper-pagination-position" slot="pagination"></div>
     </swiper>
     <div class="recommend-list">
       <div class="title">
         推荐歌单
       </div>
       <div class="hotdiss">
-        <div class="item" v-for="item in hotdiss">
+        <div :to="{name:'toplist',params: { id: item.dissid }}" class="item"
+                     v-for="(item,index) in hotdiss"
+                     :key="index">
           <img v-lazy="item.imgurl" class="musicImg">
           <p class="dissname" v-text="item.dissname"></p>
           <div class="listennum">
@@ -53,10 +54,9 @@
         shoubomv: [],
         imgList: [],
         swiperOptionIn: {
-          pagination: '.swiper-pagination-white',
-          paginationClickable: true,
           autoplay: 3000,
-          lazyLoading: true
+          lazyLoading: true,
+          autoplayDisableOnInteraction: false
         }
       }
     },
@@ -68,8 +68,12 @@
     created() {
       this.$store.dispatch('getRecommands').then((ret) => {
         ret = ret.data.data
-        this.imgList = ret.focus
-        this.hotdiss = ret.hotdiss.list.slice(0, 6)
+        console.log(ret.hotdiss.list.slice(0, 6))
+        this.imgList = ret.focus.map(v => v.pic)
+        this.hotdiss = ret.hotdiss.list.slice(0, 6).map(v => {
+          let {imgurl, dissname, listennum, dissid} = v
+          return {imgurl, dissname, listennum, dissid}
+        })
         this.shoubomv = ret.shoubomv.all
       })
     }

@@ -1,34 +1,21 @@
 <template>
-  <div class="play-control">
+  <div class="play-control" :class="{active: show}">
     <audio ref="music"
            :src="dataUrl"
            @timeupdate="updateTime"
            @ended="playContinue"
            autoplay>
     </audio>
+    <actionsheet v-model="actionsheetShow" :menus="musicMenus" show-cancel></actionsheet>
+    <div v-transfer-dom>
+      <alert v-model="alertShow" title="播放列表为空" content="请添加音乐到列表"></alert>
+    </div>
     <transition name="filter">
       <div class="bg"
            v-show="show"
            :style="{'background': `url(${coverImgUrl}) no-repeat center / cover`}"></div>
     </transition>
-    <div class="player-bar" @click="showPlayer(true)" v-show="!show">
-      <div v-transfer-dom>
-        <alert v-model="alertShow" title="播放列表为空" content="请添加音乐到列表"></alert>
-      </div>
-      <div class="wrap">
-        <div class="cover-img">
-          <img v-lazy="coverImgUrl">
-        </div>
-        <div class="music-info">
-          <p class="music-name">{{song.name}}</p>
-          <p class="music-singer">{{song.singer | concatSinger}}</p>
-        </div>
-        <div class="play-button" @click.stop="isPlay">
-          <icon name="play-circle-o" scale="3" v-show="!playing"></icon>
-          <icon name="pause-circle-o" scale="3" v-show="playing"></icon>
-        </div>
-      </div>
-    </div>
+
     <div class="player-panel" v-show="show">
       <div class="tool">
         <div class="back" @click="showPlayer(false)">
@@ -59,6 +46,27 @@
             <icon name="pause-circle" scale="4" v-show="playing"></icon>
           </div>
         </div>
+        <!--<div class="manger">
+          <div class="menus" @click="showMenus">
+            <icon name="bars" scale="3"></icon>
+          </div>
+        </div>-->
+      </div>
+    </div>
+
+    <div class="player-bar" @click="showPlayer(true)" v-show="!show">
+      <div class="wrap">
+        <div class="cover-img">
+          <img v-lazy="coverImgUrl">
+        </div>
+        <div class="music-info">
+          <p class="music-name">{{song.name}}</p>
+          <p class="music-singer">{{song.singer | concatSinger}}</p>
+        </div>
+        <div class="play-button" @click.stop="isPlay">
+          <icon name="play-circle-o" scale="3" v-show="!playing"></icon>
+          <icon name="pause-circle-o" scale="3" v-show="playing"></icon>
+        </div>
       </div>
     </div>
   </div>
@@ -66,7 +74,7 @@
 
 <script>
   import {mapMutations, mapState, mapGetters} from 'vuex'
-  import {Alert, ColorPicker, TransferDomDirective as TransferDom} from 'vux'
+  import {Alert, ColorPicker, Actionsheet, TransferDomDirective as TransferDom} from 'vux'
 
   import Lyric from './Lyric.vue'
 
@@ -77,14 +85,17 @@
     components: {
       Alert,
       ColorPicker,
-      Lyric
+      Lyric,
+      Actionsheet
     },
     data() {
       return {
         show: false,
         alertShow: false,
         colors: ['#FF3B3B', '#FFEF7D', '#8AEEB1', '#8B8AEE', '#CC68F8', '#fff'],
-        color: ''
+        color: '',
+        actionsheetShow: false,
+        musicMenus: []
       }
     },
     methods: {
@@ -94,7 +105,6 @@
         } else {
           window.removeEventListener('touchmove', preDef)
         }
-        this.$emit('showPlayer', flag)
         this.show = flag
       },
       isPlay() {
@@ -106,6 +116,9 @@
       updateTime() {
         this.$store.commit('updateCurrentTime', parseInt(this.$refs.music.currentTime))
         this.$store.commit('updateDuration', parseInt(this.$refs.music.duration))
+      },
+      showMenus() {
+        this.actionsheetShow = true
       },
       ...mapMutations([
         'play', 'pause', 'playContinue'
@@ -156,18 +169,24 @@
 
 <style lang="less" scoped>
   .play-control {
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1994;
+    height: 60px;
+    transition: height .3s;
     .bg {
       position: absolute;
       left: -50%;
-      z-index: -1;
+      z-index: 1;
       width: 200%;
       height: 100%;
-      filter: blur(15px)
+      filter: blur(10px)
     }
     .player-bar {
-      position: relative;
+      position: absolute;
+      width: 100%;
+      bottom: 0;
       height: 5rem;
       background-image: linear-gradient(to right, #EFF2F7, #1F2D3D);
       overflow: hidden;
@@ -206,13 +225,18 @@
       }
     }
     .player-panel {
+      position: absolute;
+      width: 100%;
       display: flex;
       flex-direction: column;
       height: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+      z-index: 233;
       .tool {
         position: relative;
-        height: 5rem;
+        height: 6rem;
         margin-bottom: 1rem;
+        z-index: 2;
         .back {
           position: absolute;
           left: 1rem;
@@ -294,10 +318,14 @@
       transition: 1s .3s;
     }
     .filter-leave-active {
-      transition: none;
+      transition: 0.3s 0s;
     }
     .filter-enter, .filter-leave-active {
       filter: blur(0px)
     }
+  }
+
+  .play-control.active {
+    height: 100%;
   }
 </style>

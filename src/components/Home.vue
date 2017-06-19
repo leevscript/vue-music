@@ -5,16 +5,22 @@
         <tab-item @on-item-click="tabClick" :key="index" v-for="(item,index) in TAB_NAME" v-text="item"></tab-item>
       </tab>
     </div>
-    <div class="main" ref="main">
+    <div class="main">
       <swiper :options="swiperOption" ref="swiper">
-        <swiper-slide class="swiper-item" :style="{minHeight: minHeight}">
-          <recommend></recommend>
+        <swiper-slide class="swiper-item">
+          <keep-alive>
+            <recommend></recommend>
+          </keep-alive>
         </swiper-slide>
-        <swiper-slide class="swiper-item" :style="{minHeight: minHeight}">
-          <hot></hot>
+        <swiper-slide class="swiper-item">
+          <keep-alive>
+            <hot></hot>
+          </keep-alive>
         </swiper-slide>
-        <swiper-slide class="swiper-item" :style="{minHeight: minHeight}">
-          <search></search>
+        <swiper-slide class="swiper-item" :style="{minHeight}">
+          <keep-alive>
+            <search></search>
+          </keep-alive>
         </swiper-slide>
       </swiper>
     </div>
@@ -30,6 +36,7 @@
   import {swiper, swiperSlide} from 'vue-awesome-swiper'
 
   export default {
+    name: 'home',
     components: {
       Hot,
       Search,
@@ -41,9 +48,9 @@
     },
     data() {
       return {
+        minHeight: 0,
         index: 0,
         TAB_NAME: ['推荐音乐', '热歌榜', '搜索'],
-        minHeight: 0,
         swiperOption: {
           onTransitionEnd: (swiper) => {
             window.scrollTo(0, 0)
@@ -63,7 +70,7 @@
       }
     },
     mounted() {
-      this.minHeight = this.$refs.main.offsetHeight + 'px'
+      this.minHeight = window.screen.availHeight - 104 + 'px'
     }
   }
 </script>
@@ -92,12 +99,10 @@
       height: 100%;
       .swiper-slide {
         background-color: #EFF2F7;
-        padding-bottom: 5rem;
         height: 0 !important;
       }
       .swiper-slide.swiper-slide-active {
         height: auto !important;
-        min-height: 100% !important;
       }
     }
   }

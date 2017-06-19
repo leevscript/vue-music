@@ -11,7 +11,7 @@
          ref="lyric">
       <p class="lyric-item"
          v-for="(v,k) in lyric"
-         :class="{active: k === currentKey}">
+         :class="{active: k == currentKey}">
         {{v}}
       </p>
     </div>
@@ -31,22 +31,8 @@
         start: 0,
         end: 0,
         startTime: 0,
-        maxHeight: 0
-      }
-    },
-    computed: {
-      currentKey() {
-        if (this.keys.length === 0) return 0
-        return this.keys.find((key) => {
-          return (key.split(':').reduce((a, b) => parseInt(a) * 60 * 100 + b.split('.').reduce((a, b) => parseInt(a) * 100 + parseInt(b))) + 120 > this.currentTimeStamp)
-        })
-      },
-      currentindex() {
-        return this.keys.indexOf(this.currentKey)
-      },
-      currentTimeStamp() {
-        let t = this.currentTime.split(':')
-        return (parseInt(t[0]) * 60 + parseInt(t[1])) * 100
+        maxHeight: 0,
+        currentKey: 0
       }
     },
     watch: {
@@ -60,17 +46,26 @@
               .slice(5)
               .forEach(str => {
                 let t = str.split(']')
-                if (/./.test(t[1])) lyr[t[0]] = t[1]
+                let key = t[0].split(':')[0] * 60 + Math.round(t[0].split(':')[1])
+                if (/./.test(t[1])) lyr[key] = t[1]
               })
             this.lyric = lyr
             this.keys = Object.keys(lyr)
             this.end = this.top = 0
           })
       },
-      currentindex(val) {
-        val = val < 2 ? 2 : val
-        this.duration = 300
-        this.end = this.top = -(val - 2) * 50
+      currentTime(time) {
+        let t = time.split(':')
+        let currentTimeStamp = parseInt(t[0]) * 60 + parseInt(t[1]) + 1
+        let key = this.keys.find((v, i) => {
+          if (v == currentTimeStamp) {
+            i = i < 2 ? 2 : i
+            this.duration = 300
+            this.end = this.top = -(i - 2) * 50
+            return true
+          }
+        })
+        if (key) this.currentKey = key
       }
     },
     methods: {

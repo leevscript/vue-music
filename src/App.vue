@@ -1,11 +1,13 @@
 <template>
   <div id="app">
     <transition>
-      <router-view v-show="!controlShow" class="view"></router-view>
+      <keep-alive include="home">
+        <router-view></router-view>
+      </keep-alive>
     </transition>
-    <div class="control" :class="{active: controlShow}">
-      <player-bar @showPlayer="showPlayer"></player-bar>
-    </div>
+
+    <player-bar></player-bar>
+
   </div>
 </template>
 
@@ -20,6 +22,7 @@
     data() {
       return {
         controlShow: false,
+        minHeight: 0
       }
     },
     computed: {},
@@ -29,7 +32,7 @@
       }
     },
     mounted() {
-
+      this.minHeight = window.screen.availHeight + 'px'
     }
   }
 </script>
@@ -37,25 +40,12 @@
 <style>
   @import "reset.css";
 
-  html,body {
-    height: 100%;
+  body {
+    font: 12px/1.5 FZLTXIHJW--GB1-0, "hiragino sans gb", "Helvetica Neue", Helvetica, STHeiTi, Arial, sans-serif;
   }
 
   #app {
-    height: 100%;
-  }
-
- .control {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    z-index: 1994;
-    height: 5rem;
-    transition: height .3s;
-  }
-
-  .control.active {
-    height: 100%;
+    padding-bottom: 5rem;
   }
 
 

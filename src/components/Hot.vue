@@ -55,7 +55,6 @@
       height: 7.5rem;
     }
     .info {
-
       flex: auto;
       float: left;
       margin-left: 1rem;
