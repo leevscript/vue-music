@@ -2,26 +2,30 @@
   <div class="top-list" :style="{'background-color': color}">
     <div class="album">
       <div class="bg" :style="{'background-image': `url(${picAlbum})`}"></div>
-      <div class="gradient" :style="{'background-image': `linear-gradient(to bottom, transparent, ${color} 80%)`}"></div>
+      <div class="gradient"
+           :style="{'background-image': `linear-gradient(to bottom, transparent, ${color} 80%)`}"></div>
       <a href="javascript:;" class="back" @click="back">
         <icon name="arrow-circle-left" scale="2"></icon>
       </a>
       <div class="header">
-        <div class="info">
-          <div class="title">
-            <p v-text="listName"></p>
+        <div class="info" ref="info">
+          <div class="title" :style="{'transform': `translateX(-${titleScrollX}px)`}">
+            <p v-text="listName" ref="title"></p>
+            <p v-text="listName" v-if="showSecondTitle"></p>
           </div>
           <div class="date">
-            <p v-text="updateTime+' 更新'"></p>
+            <p v-text="sub"></p>
           </div>
         </div>
-        <div class="switch"><icon name="play-circle" scale="3"></icon></div>
+        <div class="switch">
+          <icon name="play-circle" scale="3"></icon>
+        </div>
       </div>
     </div>
     <div class="list">
       <div class="item" v-for="(item,index) in songlist">
         <div class="no">{{index + 1}}</div>
-        <div class="info"  @click="play(index)">
+        <div class="info" @click="play(index)">
           <h3 class="song-name">{{item.name}}</h3>
           <p class="singer-name">{{item.singer | concatSinger}}</p>
         </div>
@@ -39,9 +43,12 @@
       return {
         picAlbum: '',
         listName: '',
-        updateTime: '',
+        titleWidth: 0,
+        titleScrollX: 0,
+        sub: '',
         songlist: [],
         color: 0,
+        showSecondTitle: false
       }
     },
     methods: {
@@ -54,6 +61,55 @@
           list: this.songlist
         })
         this.$store.commit('play')
+      },
+      getTopSongs() {
+        this.$store
+          .dispatch('getTopSongs', this.$route.params.id)
+          .then((ret) => {
+            let data = ret.data
+            this.picAlbum = data.topinfo.pic_album
+            this.listName = data.topinfo.ListName
+            this.sub = data.update_time + ' 更新'
+            this.songlist = data.songlist.map((v) => {
+              return {name: v.data.songname, singer: v.data.singer, id: v.data.songid, albummid: v.data.albummid}
+            })
+            this.color = $.colorTransform(data.color).hex
+            setTimeout(this.startScroll, 1000)
+          })
+      },
+      getCdSongs() {
+        this.$store
+          .dispatch('getCdSongs', this.$route.params.id)
+          .then((ret) => {
+            let data = ret.data.cdlist[0]
+            let visitnum = data.visitnum
+            visitnum = visitnum > 10000 ? (Math.round(visitnum / 1000)) / 10 + '万' : visitnum
+            this.picAlbum = data.logo
+            this.listName = data.dissname
+            this.sub = visitnum + ' 次播放'
+            this.songlist = data.songlist.map((v) => {
+              return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid}
+            })
+            this.color = '#000'
+            setTimeout(this.startScroll, 1000)
+          })
+      },
+      startScroll() {
+        if (!(this.showSecondTitle = (this.$refs.info.offsetWidth < this.$refs.title.offsetWidth))) return
+        this.titleWidth = this.$refs.title.offsetWidth + 100
+        let _run = () => {
+          this.titleScrollX += 1
+          if (this.titleScrollX < this.titleWidth) {
+            requestAnimationFrame(_run)
+          }
+          else {
+            this.titleScrollX = 0
+            setTimeout(() => {
+              requestAnimationFrame(_run)
+            }, 1000)
+          }
+        }
+        _run()
       }
     },
     filters: {
@@ -64,19 +120,14 @@
         }).join(' / ')
       }
     },
+    computed: {},
     created() {
-      this.$store
-        .dispatch('getRankSongs', this.$route.params.id)
-        .then((ret) => {
-          let data = ret.data
-          this.picAlbum = data.topinfo.pic_album
-          this.listName = data.topinfo.ListName
-          this.updateTime = data.update_time
-          this.songlist = data.songlist.map((v) => {
-            return {name: v.data.songname, singer: v.data.singer, id: v.data.songid, albummid: v.data.albummid}
-          })
-          this.color = $.colorTransform(data.color).hex
-        })
+      switch (this.$route.name) {
+        case 'toplist':
+          return this.getTopSongs()
+        case 'cdlist':
+          return this.getCdSongs()
+      }
     }
   }
 </script>
@@ -120,30 +171,34 @@
         justify-content: space-around;
         z-index: 3;
         .info {
-          height: 5rem;
-          width: 70%;
-          margin-right:0;
+          height: 60px;
+          flex: auto;
+          margin-right: 0;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: space-between;
+          overflow: hidden;
           .title {
-            font-size: 2rem;
-            line-height: 3rem;
-            overflow: hidden;
+            font-size: 24px;
+            width: 9999px;
+            animation: title-scroll 9s linear 0s infinite running;
             p {
               white-space: nowrap;
-              width: 1000px;
+              float: left;
+              text-overflow: ellipsis;
+              margin-right: 100px;
             }
           }
           .date {
-            font-size: 1.2rem;
-            line-height: 2rem;
+            font-size: 16px;
           }
         }
         .switch {
-          width: 20%;
-          height: 4rem;
-          line-height: 4rem;
+          flex: none;
+          margin-left: 10px;
+          width: 4rem;
+          height: 60px;
+          line-height: 60px;
         }
       }
     }

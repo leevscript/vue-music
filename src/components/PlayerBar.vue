@@ -159,7 +159,7 @@
       }
     },
     mounted() {
-
+      console.log(this.$store.state)
     }
   }
   function preDef(e) {
@@ -175,6 +175,7 @@
     z-index: 1994;
     height: 60px;
     transition: height .3s;
+    background-color: #fff;
     .bg {
       position: absolute;
       left: -50%;
@@ -318,7 +319,7 @@
       transition: 1s .3s;
     }
     .filter-leave-active {
-      transition: 0.3s 0s;
+      transition: 1s 0s;
     }
     .filter-enter, .filter-leave-active {
       filter: blur(0px)

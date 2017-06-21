@@ -36,7 +36,6 @@
     created() {
       this.$store.dispatch('getRankList').then((response) => {
         this.topList = response.data.data.topList
-        console.log(response.data.data)
       })
     }
   }

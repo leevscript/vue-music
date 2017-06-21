@@ -27,11 +27,9 @@
     },
     computed: {},
     methods: {
-      showPlayer(flag) {
-        this.controlShow = flag
-      }
+
     },
-    mounted() {
+    created() {
       this.minHeight = window.screen.availHeight + 'px'
     }
   }

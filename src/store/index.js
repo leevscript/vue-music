@@ -7,9 +7,6 @@ import PlayService from './PlayService'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
-    mainTop: 0
-  },
   modules: {
     ApiService,
     PlayService

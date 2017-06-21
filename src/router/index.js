@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home from '../components/Home.vue'
-import TopList from '../components/TopList.vue'
+import SongList from '../components/SongList.vue'
 
 Vue.use(Router)
 
@@ -16,7 +16,12 @@ export default new Router({
     {
       name: 'toplist',
       path: '/toplist/:id',
-      component: TopList
-    }
+      component: SongList
+    },
+    {
+      name: 'cdlist',
+      path: '/cd/:id',
+      component: SongList
+    },
   ]
 })

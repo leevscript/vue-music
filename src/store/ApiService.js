@@ -14,7 +14,7 @@ function apiFactory(api) {
 
 export default {
   actions: {
-    getRankSongs({}, id){
+    getTopSongs({}, id){
       return apiFactory(API.rank_songs)(id)
     },
     getRankList({}){
@@ -38,7 +38,7 @@ export default {
     getRecommands({}){
       return apiFactory(API.first_page_data)()
     },
-    getCdList({},id){
+    getCdSongs({},id){
       return apiFactory(API.cd)(id)
     },
     getLyric({},id){

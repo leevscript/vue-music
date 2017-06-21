@@ -10,15 +10,15 @@
         推荐歌单
       </div>
       <div class="hotdiss">
-        <div :to="{name:'toplist',params: { id: item.dissid }}" class="item"
-                     v-for="(item,index) in hotdiss"
-                     :key="index">
+        <router-link :to="{name:'cdlist',params: {id: item.dissid }}" class="item"
+             v-for="(item,index) in hotdiss"
+             :key="index">
           <img v-lazy="item.imgurl" class="musicImg">
           <p class="dissname" v-text="item.dissname"></p>
           <div class="listennum">
             <img src="../assets/icon-erji.svg" width="12"><span>{{item.listennum | formatNum}}</span>
           </div>
-        </div>
+        </router-link>
       </div>
     </div>
     <div class="new-list">
@@ -68,13 +68,14 @@
     created() {
       this.$store.dispatch('getRecommands').then((ret) => {
         ret = ret.data.data
-        console.log(ret.hotdiss.list.slice(0, 6))
+        console.log(ret)
         this.imgList = ret.focus.map(v => v.pic)
         this.hotdiss = ret.hotdiss.list.slice(0, 6).map(v => {
           let {imgurl, dissname, listennum, dissid} = v
           return {imgurl, dissname, listennum, dissid}
         })
         this.shoubomv = ret.shoubomv.all
+
       })
     }
   }
@@ -84,7 +85,7 @@
   .recommend {
     .recommend-list {
       .title {
-        border-left: 3px solid red;
+        border-left: 3px solid #58B7FF;
         margin: 0.8rem 0;
         font-size: 1.3rem;
         padding-left: 0.8rem;
@@ -122,7 +123,7 @@
     }
     .new-list {
       .title {
-        border-left: 3px solid red;
+        border-left: 3px solid #58B7FF;
         margin: 1rem 0;
         font-size: 1.3rem;
         padding-left: 0.8rem;
