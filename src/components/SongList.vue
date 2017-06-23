@@ -18,16 +18,21 @@
           </div>
         </div>
         <div class="switch">
-          <icon name="play-circle" scale="3"></icon>
+          <div @click="play()">
+            <icon name="play-circle" scale="3"></icon>
+          </div>
         </div>
       </div>
     </div>
     <div class="list">
-      <div class="item" v-for="(item,index) in songlist">
+      <div class="item" v-for="(item,index) in songlist" :class="{active: item.id === song.id}">
         <div class="no">{{index + 1}}</div>
         <div class="info" @click="play(index)">
           <h3 class="song-name">{{item.name}}</h3>
           <p class="singer-name">{{item.singer | concatSinger}}</p>
+          <div class="signal">
+            <icon name="signal" flip="horizontal" v-if="item.id === song.id"></icon>
+          </div>
         </div>
       </div>
     </div>
@@ -35,6 +40,8 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
+
   import $ from '../utils/$utils'
 
   export default {
@@ -48,19 +55,29 @@
         sub: '',
         songlist: [],
         color: 0,
-        showSecondTitle: false
+        showSecondTitle: false,
+        timeEvent: null
       }
+    },
+    computed: {
+      ...mapState({
+        song: state => state.PlayService.song,
+        playList: state => state.PlayService.playList
+      }),
     },
     methods: {
       back() {
         this.$router.go(-1)
       },
-      play (index) {
-        this.$store.commit('setPlayList', {
-          index: index,
-          list: this.songlist
-        })
-        this.$store.commit('play')
+      play (index = 0) {
+        if (this.songlist === this.playList) {
+          this.$store.commit('playIndex', index)
+        } else {
+          this.$store.commit('setPlayList', {
+            index: index,
+            list: this.songlist
+          })
+        }
       },
       getTopSongs() {
         this.$store
@@ -74,7 +91,7 @@
               return {name: v.data.songname, singer: v.data.singer, id: v.data.songid, albummid: v.data.albummid}
             })
             this.color = $.colorTransform(data.color).hex
-            setTimeout(this.startScroll, 1000)
+            this.timeEvent = setTimeout(this.startScroll, 1000)
           })
       },
       getCdSongs() {
@@ -91,7 +108,7 @@
               return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid}
             })
             this.color = '#000'
-            setTimeout(this.startScroll, 1000)
+            this.timeEvent = setTimeout(this.startScroll, 1000)
           })
       },
       startScroll() {
@@ -104,7 +121,7 @@
           }
           else {
             this.titleScrollX = 0
-            setTimeout(() => {
+            this.timeEvent = setTimeout(() => {
               requestAnimationFrame(_run)
             }, 1000)
           }
@@ -120,14 +137,16 @@
         }).join(' / ')
       }
     },
-    computed: {},
-    created() {
+    mounted() {
       switch (this.$route.name) {
         case 'toplist':
           return this.getTopSongs()
         case 'cdlist':
           return this.getCdSongs()
       }
+    },
+    beforeDestroy() {
+      clearTimeout(this.timeEvent)
     }
   }
 </script>
@@ -198,7 +217,6 @@
           margin-left: 10px;
           width: 4rem;
           height: 60px;
-          line-height: 60px;
         }
       }
     }
@@ -226,6 +244,7 @@
           border-bottom: 1px solid rgba(255, 255, 255, .15);
           flex: auto;
           display: flex;
+          position: relative;
           flex-direction: column;
           justify-content: center;
           .song-name {
@@ -241,6 +260,16 @@
             white-space: nowrap;
             text-overflow: ellipsis;
           }
+          .signal {
+            position: absolute;
+            right: 1rem;
+          }
+        }
+      }
+      .item.active {
+        color: #58B7FF;
+        .singer-name {
+          color: #58B7FF;
         }
       }
     }

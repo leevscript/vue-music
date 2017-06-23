@@ -26,6 +26,12 @@ export default {
     getSingerInfo({}, id){
       return apiFactory(API.singer_info)(id)
     },
+    getMvInfo({}, id){
+      return apiFactory(API.mv_info)(id)
+    },
+    getMvKey({}, option){
+      return apiFactory(API.mv_key)(option)
+    },
     smartSearch({}, key){
       return apiFactory(API.smart_search)(key)
     },
@@ -38,12 +44,12 @@ export default {
     getRecommands({}){
       return apiFactory(API.first_page_data)()
     },
-    getCdSongs({},id){
+    getCdSongs({}, id){
       return apiFactory(API.cd)(id)
     },
-    getLyric({},id){
-      return Vue.http.jsonp('https://api.darlin.me/music/lyric/'+id+'/',{
-        jsonp:'callback'
+    getLyric({}, id){
+      return Vue.http.jsonp('https://api.darlin.me/music/lyric/' + id + '/', {
+        jsonp: 'callback'
       })
     }
   }

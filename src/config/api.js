@@ -77,6 +77,45 @@ export default {
     },
     jsonp: 'jsonpCallback'
   },
+  mv_info: {
+    url: 'https://c.y.qq.com//mv/fcgi-bin/fcg_getmvinfo.fcg',
+    params: (id) => {
+      return {
+        vid: id,
+        g_tk: 5381,
+        loginUin: 0,
+        hostUin: 0,
+        inCharset: 'utf8',
+        outCharset: 'utf-8',
+        notice: 0,
+        platform: 'yqq',
+        needNewCode: 0,
+        format: 'jsonp',
+        _: new Date().getTime()
+      }
+    },
+    jsonp: 'jsonpCallback'
+  },
+  mv_key: {
+    url: 'https://bkh5vv.video.qq.com/getinfo',
+    params: (option) => {
+      return {
+        platform: 11001,
+        charge: 0,
+        otype: 'json',
+        ehost: 'https://y.qq.com',
+        sphls: 0,
+        sb: 1,
+        nocache: 0,
+        guid: option.guid,
+        appVer: 'V2.0Build9397',
+        vids: option.id,
+        defaultfmt: 'auto',
+        sdtfrom: 'v3010'
+      }
+    },
+    jsonp: 'callback'
+  },
   smart_search: {
     url: 'https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg',
     params: (key) => {

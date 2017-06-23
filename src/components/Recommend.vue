@@ -11,12 +11,13 @@
       </div>
       <div class="hotdiss">
         <router-link :to="{name:'cdlist',params: {id: item.dissid }}" class="item"
-             v-for="(item,index) in hotdiss"
-             :key="index">
+                     v-for="(item,index) in hotdiss"
+                     :key="index">
           <img v-lazy="item.imgurl" class="musicImg">
           <p class="dissname" v-text="item.dissname"></p>
           <div class="listennum">
-            <img src="../assets/icon-erji.svg" width="12"><span>{{item.listennum | formatNum}}</span>
+            <icon name="headphones" scale="1"></icon>
+            <span>{{item.listennum | formatNum}}</span>
           </div>
         </router-link>
       </div>
@@ -26,7 +27,9 @@
         最新音乐
       </div>
       <div class="shoubomv">
-        <div class="item" v-for="item in shoubomv">
+        <router-link :to="{name: 'mv',params: {id: item.vid}}" class="item"
+                     v-for="(item,index) in shoubomv"
+                     :key="index">
           <img v-lazy="item.picurl">
           <div class="details">
             <p class="name" v-text="item.mvtitle"></p>
@@ -34,7 +37,7 @@
             <p class="date" v-text="item.pub_date"></p>
             <p class="singer">{{item.listennum | formatNum}}</p>
           </div>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>
@@ -56,7 +59,8 @@
         swiperOptionIn: {
           autoplay: 3000,
           lazyLoading: true,
-          autoplayDisableOnInteraction: false
+          autoplayDisableOnInteraction: false,
+          loop: true
         }
       }
     },
@@ -66,7 +70,7 @@
       }
     },
     created() {
-      this.$store.dispatch('getRecommands').then((ret) => {
+      this.$store.dispatch('getRecommands').then(ret => {
         ret = ret.data.data
         console.log(ret)
         this.imgList = ret.focus.map(v => v.pic)
@@ -107,15 +111,14 @@
           }
           .listennum {
             position: absolute;
-            right: 5px;
+            left: 5px;
             top: 5px;
             color: #fff;
-            font-size: 13px;
-            padding-left: 13px;
-            img {
+            font-size: 12px;
+            padding-left: 16px;
+            .fa-icon {
               position: absolute;
               left: 0;
-              top: 3px;
             }
           }
         }
@@ -132,6 +135,7 @@
         padding: 0px 10px;
         .item {
           width: 100%;
+          display: block;
           position: relative;
           border-bottom: 1px solid #EFF2F7;
           padding: 5px;

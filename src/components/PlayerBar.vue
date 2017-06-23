@@ -40,17 +40,26 @@
             {{duration}}
           </div>
         </div>
+        <div class="operation">
+          <div class="list-button" @click.stop="showMenus">
+            <icon name="align-justify" scale="2"></icon>
+          </div>
+          <div class="love-button" @click.stop="">
+            <icon name="heart-o" scale="2"></icon>
+          </div>
+        </div>
         <div class="button">
+          <div class="backward-button" @click.stop="playFront">
+            <icon name="backward" scale="2"></icon>
+          </div>
           <div class="play-button" @click.stop="isPlay">
             <icon name="play-circle" scale="4" v-show="!playing"></icon>
             <icon name="pause-circle" scale="4" v-show="playing"></icon>
           </div>
-        </div>
-        <!--<div class="manger">
-          <div class="menus" @click="showMenus">
-            <icon name="bars" scale="3"></icon>
+          <div class="forward-button" @click.stop="playNext">
+            <icon name="forward" scale="2"></icon>
           </div>
-        </div>-->
+        </div>
       </div>
     </div>
 
@@ -121,7 +130,7 @@
         this.actionsheetShow = true
       },
       ...mapMutations([
-        'play', 'pause', 'playContinue'
+        'play', 'pause', 'playContinue', 'playFront', 'playNext'
       ])
     },
     watch: {
@@ -157,9 +166,6 @@
           return v.name
         }).join('、')
       }
-    },
-    mounted() {
-      console.log(this.$store.state)
     }
   }
   function preDef(e) {
@@ -269,16 +275,17 @@
       .control {
         position: relative;
         margin-top: 1rem;
-        height: 30rem;
+        height: 18rem;
         background-color: rgba(0, 0, 0, 0.3);
         overflow: hidden;
         z-index: 2;
+        flex: none;
+        color: #C0CCDA;
         .progress {
           width: 100%;
-          height: 22px;
+          height: 2rem;
           display: flex;
           font-size: 0.8rem;
-          color: #C0CCDA;
           line-height: 22px;
           .current-time {
             width: 4rem;
@@ -304,12 +311,23 @@
             }
           }
         }
+        .operation {
+          height: 6rem;
+          padding: 1rem;
+          display: flex;
+          justify-content: space-between;
+        }
         .button {
-          height: 10rem;
-          color: #fff;
+          height: 8rem;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          .backward-button,
+          .forward-button {
+            height: 3rem;
+          }
           .play-button {
-            line-height: 10rem;
-            text-align: center;
+            height: 5rem;
           }
         }
       }

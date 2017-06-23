@@ -1,11 +1,10 @@
 <template>
   <div id="app">
     <transition>
-      <keep-alive include="home">
-        <router-view></router-view>
-      </keep-alive>
-    </transition>
 
+      <router-view></router-view>
+
+    </transition>
     <player-bar></player-bar>
 
   </div>
@@ -26,9 +25,7 @@
       }
     },
     computed: {},
-    methods: {
-
-    },
+    methods: {},
     created() {
       this.minHeight = window.screen.availHeight + 'px'
     }
