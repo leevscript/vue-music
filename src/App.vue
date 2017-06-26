@@ -1,12 +1,7 @@
 <template>
   <div id="app">
-    <transition>
-
-      <router-view></router-view>
-
-    </transition>
+    <router-view></router-view>
     <player-bar></player-bar>
-
   </div>
 </template>
 
@@ -35,13 +30,18 @@
 <style>
   @import "reset.css";
 
+  html, body, #app {
+    height: 100%;
+  }
+
   body {
+    overflow: hidden;
+    padding-bottom: 60px;
     font: 12px/1.5 FZLTXIHJW--GB1-0, "hiragino sans gb", "Helvetica Neue", Helvetica, STHeiTi, Arial, sans-serif;
   }
 
   #app {
-    padding-bottom: 5rem;
+    overflow: auto;
   }
-
 
 </style>

@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   import Base64 from '../utils/base64'
   export default {
     props: ['currentTime', 'songid'],

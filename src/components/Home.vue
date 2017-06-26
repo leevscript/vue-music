@@ -17,7 +17,7 @@
             <hot></hot>
           </keep-alive>
         </swiper-slide>
-        <swiper-slide class="swiper-item" :style="{minHeight}">
+        <swiper-slide class="swiper-item">
           <keep-alive>
             <search></search>
           </keep-alive>
@@ -48,12 +48,11 @@
     },
     data() {
       return {
-        minHeight: 0,
         index: 0,
         TAB_NAME: ['推荐音乐', '热歌榜', '搜索'],
         swiperOption: {
           onTransitionEnd: (swiper) => {
-            window.scrollTo(0, 0)
+            document.getElementById('app').scrollTop = 0
             this.index = swiper.activeIndex
           }
         }
@@ -81,6 +80,7 @@
     width: 100%;
     padding-top: 44px;
     position: relative;
+
     .tab {
       position: fixed;
       width: 100%;
@@ -96,10 +96,14 @@
       }
     }
     .main {
+      width: 100%;
       height: 100%;
       .swiper-slide {
-        background-color: #EFF2F7;
         height: 0 !important;
+      }
+      .swiper-container {
+        min-height: 100%;
+        background-color: #EFF2F7;
       }
       .swiper-slide.swiper-slide-active {
         height: auto !important;

@@ -8,7 +8,8 @@ export default {
     playMode: def.SEQUENTIAL,
     index: 0,
     song: {
-      name: def.DEFAULT_SONG_NAME
+      name: def.DEFAULT_SONG_NAME,
+      singer:[]
     },
     playList: []
   },
@@ -90,6 +91,7 @@ export default {
   },
   getters: {
     currentTime: state => parseInt(state.currentTime / 60) + ':' + (Array(2).join(0) + (state.currentTime % 60)).slice(-2),
+    singerString: state => state.song.singer.map((v) => {return v.name}).join('、'),
     duration: state => parseInt(state.duration / 60) + ':' + (Array(2).join(0) + (state.duration % 60)).slice(-2),
     coverImgUrl:state => {
       if(!state.song.albummid)

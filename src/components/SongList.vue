@@ -1,20 +1,17 @@
 <template>
-  <div class="top-list" :style="{'background-color': color}">
+  <div class="top-list" :style="{'background-color': info.color}">
     <div class="album">
-      <div class="bg" :style="{'background-image': `url(${picAlbum})`}"></div>
+      <div class="bg" :style="{'background-image': `url(${info.picAlbum})`}"></div>
       <div class="gradient"
-           :style="{'background-image': `linear-gradient(to bottom, transparent, ${color} 80%)`}"></div>
+           :style="{'background-image': `linear-gradient(to bottom, transparent, ${info.color} 80%)`}"></div>
       <a href="javascript:;" class="back" @click="back">
         <icon name="arrow-circle-left" scale="2"></icon>
       </a>
       <div class="header">
         <div class="info" ref="info">
-          <div class="title" :style="{'transform': `translateX(-${titleScrollX}px)`}">
-            <p v-text="listName" ref="title"></p>
-            <p v-text="listName" v-if="showSecondTitle"></p>
-          </div>
+          <scroll-txt class="title" :distance="100" :txt="info.listName"></scroll-txt>
           <div class="date">
-            <p v-text="sub"></p>
+            <p v-text="info.sub"></p>
           </div>
         </div>
         <div class="switch">
@@ -30,9 +27,6 @@
         <div class="info" @click="play(index)">
           <h3 class="song-name">{{item.name}}</h3>
           <p class="singer-name">{{item.singer | concatSinger}}</p>
-          <div class="signal">
-            <icon name="signal" flip="horizontal" v-if="item.id === song.id"></icon>
-          </div>
         </div>
       </div>
     </div>
@@ -40,23 +34,20 @@
 </template>
 
 <script>
+  import ScrollTxt from './ScrollTxt.vue'
   import {mapState} from 'vuex'
 
   import $ from '../utils/$utils'
 
   export default {
     name: 'toplist',
+    components: {
+      ScrollTxt
+    },
     data() {
       return {
-        picAlbum: '',
-        listName: '',
-        titleWidth: 0,
-        titleScrollX: 0,
-        sub: '',
-        songlist: [],
-        color: 0,
-        showSecondTitle: false,
-        timeEvent: null
+        info: {},
+        songlist: []
       }
     },
     computed: {
@@ -78,20 +69,20 @@
             list: this.songlist
           })
         }
+        this.$store.commit('play')
       },
       getTopSongs() {
         this.$store
           .dispatch('getTopSongs', this.$route.params.id)
           .then((ret) => {
             let data = ret.data
-            this.picAlbum = data.topinfo.pic_album
-            this.listName = data.topinfo.ListName
-            this.sub = data.update_time + ' 更新'
+            this.info.picAlbum = data.topinfo.pic_album
+            this.info.listName = data.topinfo.ListName
+            this.info.sub = data.update_time + ' 更新'
+            this.info.color = $.colorTransform(data.color).hex
             this.songlist = data.songlist.map((v) => {
               return {name: v.data.songname, singer: v.data.singer, id: v.data.songid, albummid: v.data.albummid}
             })
-            this.color = $.colorTransform(data.color).hex
-            this.timeEvent = setTimeout(this.startScroll, 1000)
           })
       },
       getCdSongs() {
@@ -101,33 +92,15 @@
             let data = ret.data.cdlist[0]
             let visitnum = data.visitnum
             visitnum = visitnum > 10000 ? (Math.round(visitnum / 1000)) / 10 + '万' : visitnum
-            this.picAlbum = data.logo
-            this.listName = data.dissname
-            this.sub = visitnum + ' 次播放'
+            this.info.picAlbum = data.logo
+            this.info.listName = data.dissname
+            this.info.sub = visitnum + ' 次播放'
+            this.info.color = '#000'
             this.songlist = data.songlist.map((v) => {
               return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid}
             })
-            this.color = '#000'
-            this.timeEvent = setTimeout(this.startScroll, 1000)
           })
       },
-      startScroll() {
-        if (!(this.showSecondTitle = (this.$refs.info.offsetWidth < this.$refs.title.offsetWidth))) return
-        this.titleWidth = this.$refs.title.offsetWidth + 100
-        let _run = () => {
-          this.titleScrollX += 1
-          if (this.titleScrollX < this.titleWidth) {
-            requestAnimationFrame(_run)
-          }
-          else {
-            this.titleScrollX = 0
-            this.timeEvent = setTimeout(() => {
-              requestAnimationFrame(_run)
-            }, 1000)
-          }
-        }
-        _run()
-      }
     },
     filters: {
       concatSinger(arr) {
@@ -137,16 +110,15 @@
         }).join(' / ')
       }
     },
-    mounted() {
-      switch (this.$route.name) {
-        case 'toplist':
-          return this.getTopSongs()
-        case 'cdlist':
-          return this.getCdSongs()
-      }
-    },
-    beforeDestroy() {
-      clearTimeout(this.timeEvent)
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        switch (to.name) {
+          case 'toplist':
+            return vm.getTopSongs()
+          case 'cdlist':
+            return vm.getCdSongs()
+        }
+      })
     }
   }
 </script>
@@ -199,14 +171,6 @@
           overflow: hidden;
           .title {
             font-size: 24px;
-            width: 9999px;
-            animation: title-scroll 9s linear 0s infinite running;
-            p {
-              white-space: nowrap;
-              float: left;
-              text-overflow: ellipsis;
-              margin-right: 100px;
-            }
           }
           .date {
             font-size: 16px;
@@ -259,10 +223,6 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-          }
-          .signal {
-            position: absolute;
-            right: 1rem;
           }
         }
       }

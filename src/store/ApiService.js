@@ -29,7 +29,7 @@ export default {
     getMvInfo({}, id){
       return apiFactory(API.mv_info)(id)
     },
-    getMvKey({}, option){
+    getMVKey({}, option){
       return apiFactory(API.mv_key)(option)
     },
     smartSearch({}, key){

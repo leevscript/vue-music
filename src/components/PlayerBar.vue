@@ -15,7 +15,6 @@
            v-show="show"
            :style="{'background': `url(${coverImgUrl}) no-repeat center / cover`}"></div>
     </transition>
-
     <div class="player-panel" v-show="show">
       <div class="tool">
         <div class="back" @click="showPlayer(false)">
@@ -25,7 +24,6 @@
           <color-picker :colors="colors" v-model="color" size="small" class="color"></color-picker>
           <icon name="exchange" scale="2" class="exchange"></icon>
         </div>
-
       </div>
       <Lyric class="lyric" :songid="song.id" :currentTime="currentTime"></Lyric>
       <div class="control">
@@ -62,7 +60,6 @@
         </div>
       </div>
     </div>
-
     <div class="player-bar" @click="showPlayer(true)" v-show="!show">
       <div class="wrap">
         <div class="cover-img">
@@ -109,11 +106,6 @@
     },
     methods: {
       showPlayer(flag) {
-        if (flag) {
-          window.addEventListener('touchmove', preDef)
-        } else {
-          window.removeEventListener('touchmove', preDef)
-        }
         this.show = flag
       },
       isPlay() {
@@ -164,12 +156,9 @@
         if (!arr) return ''
         return arr.map((v) => {
           return v.name
-        }).join('、')
+        }).join(' / ')
       }
     }
-  }
-  function preDef(e) {
-    e.preventDefault()
   }
 </script>
 
