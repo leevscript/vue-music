@@ -27,6 +27,16 @@ export default new Router({
       component: SongList
     },
     {
+      name: 'albumlist',
+      path: '/albumlist/:id',
+      component: SongList
+    },
+    {
+      name: 'singerlist',
+      path: '/singerlist/:id',
+      component: SongList
+    },
+    {
       name: 'mv',
       path: '/mv/:id',
       component: MV

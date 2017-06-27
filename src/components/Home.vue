@@ -104,6 +104,7 @@
       .swiper-container {
         min-height: 100%;
         background-color: #EFF2F7;
+        padding-bottom: 60px;
       }
       .swiper-slide.swiper-slide-active {
         height: auto !important;

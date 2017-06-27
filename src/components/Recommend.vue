@@ -24,7 +24,7 @@
     </div>
     <div class="new-list">
       <div class="title">
-        最新音乐
+        最新MV
       </div>
       <div class="shoubomv">
         <router-link :to="{name: 'mv',params: {id: item.vid}}" class="item"
@@ -32,10 +32,10 @@
                      :key="index">
           <img v-lazy="item.picurl">
           <div class="details">
-            <p class="name" v-text="item.mvtitle"></p>
-            <p class="singer" v-text="item.singer_name"></p>
-            <p class="date" v-text="item.pub_date"></p>
-            <p class="singer">{{item.listennum | formatNum}}</p>
+            <p class="ellipsis name" v-text="item.mvtitle"></p>
+            <p class="ellipsis singer" v-text="item.singer_name"></p>
+            <p class="ellipsis date" v-text="item.pub_date"></p>
+            <p class="ellipsis singer">播放 {{item.listennum | formatNum}} 次</p>
           </div>
         </router-link>
       </div>
@@ -72,7 +72,6 @@
     created() {
       this.$store.dispatch('getRecommands').then(ret => {
         ret = ret.data.data
-        console.log(ret)
         this.imgList = ret.focus.map(v => v.pic)
         this.hotdiss = ret.hotdiss.list.slice(0, 6).map(v => {
           let {imgurl, dissname, listennum, dissid} = v
@@ -135,19 +134,21 @@
         padding: 0px 10px;
         .item {
           width: 100%;
-          display: block;
-          position: relative;
+          display: -webkit-box;
+          height: 8rem;
           border-bottom: 1px solid #EFF2F7;
-          padding: 5px;
-          overflow: hidden;
           img {
-            width: 30%;
-            display: block;
-            float: left;
+            height: 6rem;
           }
           .details {
-            width: 65%;
-            float: right;
+            -webkit-box-flex: 1;
+            padding-left: 1rem;
+            color: #8492A6;
+            .name {
+              font-size: 1.2rem;
+              font-weight: 600;
+              color: #1F2D3D;
+            }
           }
         }
       }

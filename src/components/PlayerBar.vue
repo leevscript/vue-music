@@ -39,22 +39,25 @@
           </div>
         </div>
         <div class="operation">
-          <div class="list-button" @click.stop="showMenus">
+          <div class="list-button" @click.stop="showMenus" v-if="isOne">
             <icon name="align-justify" scale="2"></icon>
+          </div>
+          <div class="mv-button" @click.stop="playMV(song.vid)" v-if="song.vid">
+            <icon name="video-camera" scale="2"></icon>
           </div>
           <div class="love-button" @click.stop="">
             <icon name="heart-o" scale="2"></icon>
           </div>
         </div>
         <div class="button">
-          <div class="backward-button" @click.stop="playFront">
+          <div class="backward-button" @click.stop="playFront" v-if="isOne">
             <icon name="backward" scale="2"></icon>
           </div>
           <div class="play-button" @click.stop="isPlay">
             <icon name="play-circle" scale="4" v-show="!playing"></icon>
             <icon name="pause-circle" scale="4" v-show="playing"></icon>
           </div>
-          <div class="forward-button" @click.stop="playNext">
+          <div class="forward-button" @click.stop="playNext" v-if="isOne">
             <icon name="forward" scale="2"></icon>
           </div>
         </div>
@@ -62,12 +65,12 @@
     </div>
     <div class="player-bar" @click="showPlayer(true)" v-show="!show">
       <div class="wrap">
-        <div class="cover-img">
-          <img v-lazy="coverImgUrl">
-        </div>
         <div class="music-info">
-          <p class="music-name">{{song.name}}</p>
-          <p class="music-singer">{{song.singer | concatSinger}}</p>
+          <img :src="coverImgUrl">
+          <div class="music-txt">
+            <p class="music-name ellipsis">{{song.name}}</p>
+            <p class="music-singer ellipsis">{{song.singer | concatSinger}}</p>
+          </div>
         </div>
         <div class="play-button" @click.stop="isPlay">
           <icon name="play-circle-o" scale="3" v-show="!playing"></icon>
@@ -106,6 +109,8 @@
     },
     methods: {
       showPlayer(flag) {
+        if (flag) window.addEventListener('touchmove', this.preventScroll)
+        else window.removeEventListener('touchmove', this.preventScroll)
         this.show = flag
       },
       isPlay() {
@@ -120,6 +125,13 @@
       },
       showMenus() {
         this.actionsheetShow = true
+      },
+      preventScroll(e) {
+        e.preventDefault()
+      },
+      playMV(vid) {
+        this.show = false
+        this.$router.push({name: 'mv', params: {id: vid}})
       },
       ...mapMutations([
         'play', 'pause', 'playContinue', 'playFront', 'playNext'
@@ -142,13 +154,17 @@
           return 'http://ws.stream.qqmusic.qq.com/' + state.PlayService.song.id + '.m4a?fromtag=46'
         },
         playing: state => state.PlayService.playing,
-        song: state => state.PlayService.song
+        song: state => state.PlayService.song,
+        playList: state => state.PlayService.playList
       }),
       progress() {
         if (!this.duration || !this.currentTime) return 0
         let ct = this.currentTime.split(':')
         let dt = this.duration.split(':')
         return parseInt(((parseInt(ct[0]) * 60 + parseInt(ct[1])) / (parseInt(dt[0]) * 60 + parseInt(dt[1]))) * 100)
+      },
+      isOne() {
+        return this.playList.length > 1
       }
     },
     filters: {
@@ -181,42 +197,47 @@
     }
     .player-bar {
       position: absolute;
+      color: #F9FAFC;
       width: 100%;
       bottom: 0;
       height: 5rem;
-      background-image: linear-gradient(to right, #EFF2F7, #1F2D3D);
       overflow: hidden;
       z-index: 2;
+      background-color: #58B7FF;
       .wrap {
         position: absolute;
         width: 100%;
         height: 5rem;
         top: 50%;
         transform: translateY(-50%);
-        .cover-img {
-          width: 4rem;
-          height: 4rem;
-          overflow: hidden;
-          margin: 0.5rem 0 0 1rem;
-          float: left;
-        }
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         .music-info {
-          float: left;
-          margin-left: 1rem;
-          .music-name {
-            line-height: 3rem;
-            font-size: 1.3rem;
+          flex: auto;
+          padding-left: 1rem;
+          display: flex;
+          align-items: center;
+          img {
+            flex: none;
+            width: 4rem;
+            height: 4rem;
+            overflow: hidden;
           }
-          .music-singer {
-            line-height: 1rem;
+          .music-txt {
+            color: #1F2D3D;
+            padding-left: 1rem;
+            flex: auto;
+            .music-name {
+              font-size: 1.2rem;
+              font-weight: 600;
+            }
           }
         }
         .play-button {
-          float: right;
-          line-height: 4rem;
-          margin-right: 1rem;
-          margin-top: 0.5rem;
-          color: #58B7FF;
+          width: 4rem;
+          height: 4rem;
+          flex: none;
         }
       }
     }
@@ -231,7 +252,6 @@
       .tool {
         position: relative;
         height: 6rem;
-        margin-bottom: 1rem;
         z-index: 2;
         .back {
           position: absolute;
@@ -302,7 +322,7 @@
         }
         .operation {
           height: 6rem;
-          padding: 1rem;
+          padding: 1rem 2rem;
           display: flex;
           justify-content: space-between;
         }

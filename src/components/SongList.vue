@@ -74,21 +74,21 @@
       getTopSongs() {
         this.$store
           .dispatch('getTopSongs', this.$route.params.id)
-          .then((ret) => {
+          .then(ret => {
             let data = ret.data
             this.info.picAlbum = data.topinfo.pic_album
             this.info.listName = data.topinfo.ListName
             this.info.sub = data.update_time + ' 更新'
             this.info.color = $.colorTransform(data.color).hex
             this.songlist = data.songlist.map((v) => {
-              return {name: v.data.songname, singer: v.data.singer, id: v.data.songid, albummid: v.data.albummid}
+              return {name: v.data.songname, singer: v.data.singer, id: v.data.songid, albummid: v.data.albummid, vid: v.data.vid}
             })
           })
       },
       getCdSongs() {
         this.$store
           .dispatch('getCdSongs', this.$route.params.id)
-          .then((ret) => {
+          .then(ret => {
             let data = ret.data.cdlist[0]
             let visitnum = data.visitnum
             visitnum = visitnum > 10000 ? (Math.round(visitnum / 1000)) / 10 + '万' : visitnum
@@ -97,10 +97,38 @@
             this.info.sub = visitnum + ' 次播放'
             this.info.color = '#000'
             this.songlist = data.songlist.map((v) => {
-              return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid}
+              return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid, vid: v.mv.vid}
             })
           })
       },
+      getAlbumlSongs() {
+        this.$store
+          .dispatch('getAlbum', this.$route.params.id)
+          .then(ret=>{
+            let data = ret.data.data
+            this.info.picAlbum = `https://y.gtimg.cn/music/photo_new/T002R500x500M000${data.mid}.jpg`
+            this.info.listName = data.name
+            this.info.sub = `${data.singername} ${data.aDate} ${data.genre}`
+            this.info.color = $.colorTransform(data.color).hex
+            this.songlist = data.list.map((v) => {
+              return {name: v.songname, singer: v.singer, id: v.songid, albummid: v.albummid,vid: v.vid}
+            })
+          })
+      },
+      getSingerSongs() {
+        this.$store
+          .dispatch('getSingerInfo', this.$route.params.id)
+          .then(ret=>{
+            let data = ret.data.data
+            this.info.picAlbum = `https://y.gtimg.cn/music/photo_new/T001R300x300M000${data.singer_mid}.jpg`
+            this.info.listName = data.singer_name
+            this.info.sub = `粉丝 ${data.fans}人`
+            this.info.color = $.colorTransform(data.color).hex
+            this.songlist = data.list.map((v) => {
+              return {name: v.musicData.songname, singer: v.musicData.singer, id: v.musicData.songid, albummid: v.musicData.albummid,vid: v.vid.Fvid}
+            })
+          })
+      }
     },
     filters: {
       concatSinger(arr) {
@@ -117,6 +145,10 @@
             return vm.getTopSongs()
           case 'cdlist':
             return vm.getCdSongs()
+          case 'albumlist':
+            return vm.getAlbumlSongs()
+          case 'singerlist':
+            return vm.getSingerSongs()
         }
       })
     }
@@ -127,6 +159,7 @@
   .top-list {
     position: relative;
     overflow: hidden;
+    padding-bottom: 60px;
     .album {
       position: relative;
       .bg {

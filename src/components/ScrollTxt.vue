@@ -23,6 +23,7 @@
       return {
         scrollX: 0,
         timeEvent: null,
+        animationFrame: null,
         txtWidth: 0,
         containerWidth: 0,
         showSecondTitle: false,
@@ -32,31 +33,37 @@
     methods: {
       run() {
         this.scrollX += 1
-        if (this.scrollX < this.maxWidth) {
-          requestAnimationFrame(this.run)
-        }
-        else {
+        if (this.scrollX >= this.maxWidth) {
           this.scrollX = 0
-          this.timeEvent = setTimeout(() => {
-            requestAnimationFrame(this.run)
-          }, 1000)
+          this.stopAnimation()
+          return this.timeEvent = setTimeout(this.run, 1000)
         }
+        this.animationFrame = requestAnimationFrame(this.run)
+      },
+      stopAnimation() {
+        if (this.animationFrame) cancelAnimationFrame(this.animationFrame)
+      },
+      stopTimeEvent() {
+        if (this.timeEvent) clearTimeout(this.timeEvent)
       }
     },
     watch: {
       txt(val) {
         if (val) {
-          this.timeEvent = setTimeout(()=>{
+          this.stopTimeEvent()
+          this.stopAnimation()
+          this.timeEvent = setTimeout(() => {
             this.txtWidth = this.$refs.txt.offsetWidth
             this.containerWidth = this.$refs.container.offsetWidth
             this.maxWidth = this.txtWidth + this.distance
-            if(this.showSecondTitle = (this.containerWidth < this.maxWidth)) this.run()
+            if (this.showSecondTitle = (this.containerWidth < this.maxWidth)) this.run()
           }, 1000)
         }
       }
     },
     beforeDestroy() {
-      if (this.timeEvent) clearTimeout(this.timeEvent)
+      this.stopAnimation()
+      this.stopTimeEvent()
     }
   }
 </script>
