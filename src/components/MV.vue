@@ -2,7 +2,7 @@
   <div class="mv">
     <div class="title">
       <div class="back" @click="back">
-        <icon name="arrow-circle-o-left" scale="2"></icon>
+        <icon name="arrow-circle-left" scale="2"></icon>
       </div>
       <scroll-txt class="mvname" :txt="info.mvname"></scroll-txt>
     </div>
@@ -103,6 +103,7 @@
         position: absolute;
         width: 3rem;
         height: 3rem;
+        color: rgba(255, 255, 255, 0.75);
         left: 1rem;
         top: 1rem;
       }

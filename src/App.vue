@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-
+    <keep-alive include="home">
       <router-view></router-view>
-
+    </keep-alive>
     <player-bar></player-bar>
   </div>
 </template>
@@ -21,8 +21,6 @@
         minHeight: 0
       }
     },
-    computed: {},
-    methods: {},
     created() {
       this.minHeight = window.screen.availHeight + 'px'
     }
@@ -34,10 +32,6 @@
 
   html, body, #app {
     height: 100%;
-  }
-
-  body {
-    font: 12px/1.5 FZLTXIHJW--GB1-0, "hiragino sans gb", "Helvetica Neue", Helvetica, STHeiTi, Arial, sans-serif;
   }
 
   /*隐藏文字*/

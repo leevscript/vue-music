@@ -52,6 +52,8 @@
         if (val) {
           this.stopTimeEvent()
           this.stopAnimation()
+          this.scrollX = 0
+          this.showSecondTitle = 0
           this.timeEvent = setTimeout(() => {
             this.txtWidth = this.$refs.txt.offsetWidth
             this.containerWidth = this.$refs.container.offsetWidth

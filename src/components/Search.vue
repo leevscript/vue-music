@@ -34,7 +34,7 @@
           <p class="title ellipsis" v-text="item.name"></p>
           <p class="sub ellipsis" v-text="concatName(item.singer)"></p>
         </div>
-        <div class="result-mv" v-if="item.vid"  @click.stop="playMV(item.vid)">
+        <div class="result-mv" v-if="item.vid" @click.stop="playMV(item.vid)">
           <icon name="video-camera" scale="1"></icon>
         </div>
       </div>
@@ -96,7 +96,7 @@
                 title: zhida.singerName,
                 sub: `单曲：${zhida.songNum} 专辑：${zhida.albumNum}`,
                 img: zhida.singerPic,
-                url: {name: 'singerlist', params: {id: zhida.singerMID}}
+                url: {name: 'songlist', params: {id: zhida.singerMID, type: 'singerlist'}}
               }
             } else if (zhida.type === 2) {
               zhida = zhida.zhida_album
@@ -104,7 +104,7 @@
                 title: zhida.albumName,
                 sub: zhida.singerName,
                 img: zhida.albumPic,
-                url: {name: 'albumlist', params: {id: zhida.albumMID}}
+                url: {name: 'songlist', params: {id: zhida.albumMID, type: 'albumlist'}}
               }
             }
             this.results = data.song.list.map(v => {
@@ -215,13 +215,11 @@
           margin-left: 1rem;
           display: flex;
           flex-direction: column;
+          justify-content: center;
           .title {
-            height: 2rem;
-            line-height: 2rem;
             font-size: 1.3rem;
           }
           .sub {
-            height: 2rem;
             font-size: 0.9rem;
             color: #888;
           }

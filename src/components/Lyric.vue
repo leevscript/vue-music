@@ -1,18 +1,18 @@
 <template>
-  <div class="wrap"
+  <div class="lyric-wrap"
        @touchstart.prevent="touchstart"
        @touchmove.prevent="touchmove"
        @touchend.prevent="touchend"
        ref="wrap">
-    <div class="music-lyric"
+    <div class="lyric"
          :style="{'transition': `-webkit-transform ${duration}ms ease-out`,
                   'transform-origin': '0px 0px 0px',
                   'transform': `translate3d(0px, ${top}px, 0px) scale(1)`}"
          ref="lyric">
       <p class="lyric-item"
+         :class="{active: k == currentKey}"
          v-for="(v,k) in lyric"
-         :class="{active: k == currentKey}">
-        {{v}}
+         v-text="v">
       </p>
     </div>
   </div>
@@ -36,23 +36,8 @@
       }
     },
     watch: {
-      songid(id) {
-        let lyr = {}
-        this.$store.dispatch('getLyric', id)
-          .then((ret) => {
-            Base64
-              .decode(ret.data.lyric)
-              .split('[')
-              .slice(5)
-              .forEach(str => {
-                let t = str.split(']')
-                let key = t[0].split(':')[0] * 60 + Math.round(t[0].split(':')[1])
-                if (/./.test(t[1])) lyr[key] = t[1]
-              })
-            this.lyric = lyr
-            this.keys = Object.keys(lyr)
-            this.end = this.top = 0
-          })
+      songid() {
+        this.getLyric()
       },
       currentTime(time) {
         let t = time.split(':')
@@ -69,6 +54,25 @@
       }
     },
     methods: {
+      getLyric() {
+        if (!this.songid) return
+        let lyr = {}
+        this.$store.dispatch('getLyric', this.songid)
+          .then((ret) => {
+            Base64
+              .decode(ret.data.lyric)
+              .split('[')
+              .slice(5)
+              .forEach(str => {
+                let t = str.split(']')
+                let key = t[0].split(':')[0] * 60 + Math.round(t[0].split(':')[1])
+                if (/./.test(t[1])) lyr[key] = t[1]
+              })
+            this.lyric = lyr
+            this.keys = Object.keys(lyr)
+            this.end = this.top = 0
+          })
+      },
       touchstart(e) {
         this.duration = 0
         this.startTime = (new Date()).getTime()
@@ -95,16 +99,19 @@
         if (this.end < -this.maxHeight) this.end = -this.maxHeight
         this.top = this.end
       }
+    },
+    mounted() {
+      this.getLyric()
     }
   }
 </script>
 
 <style scoped lang="less">
-  .wrap {
+  .lyric-wrap {
     height: 100%;
     position: relative;
     overflow: hidden;
-    .music-lyric {
+    .lyric {
       width: 100%;
       position: absolute;
       left: 0;

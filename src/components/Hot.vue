@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="(item,index) in topList" class="card" :key="index">
-      <router-link :to="{name:'toplist',params: { id: item.id }}" class="card-item">
+      <router-link :to="{name:'songlist',params: { id: item.id, type:'toplist' }}" class="card-item">
         <img :src="item.picUrl">
         <div class="info">
           <p class="title" v-text="item.topTitle"></p>

@@ -10,7 +10,7 @@
         推荐歌单
       </div>
       <div class="hotdiss">
-        <router-link :to="{name:'cdlist',params: {id: item.dissid }}" class="item"
+        <router-link :to="{name:'songlist',params: {id: item.dissid, type:'cdlist'}}" class="item"
                      v-for="(item,index) in hotdiss"
                      :key="index">
           <img v-lazy="item.imgurl" class="musicImg">
@@ -78,7 +78,6 @@
           return {imgurl, dissname, listennum, dissid}
         })
         this.shoubomv = ret.shoubomv.all
-
       })
     }
   }

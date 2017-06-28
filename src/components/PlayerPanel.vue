@@ -1,23 +1,13 @@
 <template>
-  <div class="play-control" :class="{active: show}">
-    <audio ref="music"
-           :src="dataUrl"
-           @timeupdate="updateTime"
-           @ended="playContinue"
-           autoplay>
-    </audio>
+  <div class="player-panel">
     <actionsheet v-model="actionsheetShow" :menus="musicMenus" show-cancel></actionsheet>
-    <div v-transfer-dom>
-      <alert v-model="alertShow" title="播放列表为空" content="请添加音乐到列表"></alert>
-    </div>
     <transition name="filter">
       <div class="bg"
-           v-show="show"
            :style="{'background': `url(${coverImgUrl}) no-repeat center / cover`}"></div>
     </transition>
-    <div class="player-panel" v-show="show">
+    <div class="play-control">
       <div class="tool">
-        <div class="back" @click="showPlayer(false)">
+        <div class="back" @click.stop="back">
           <icon name="arrow-circle-o-down" scale="2"></icon>
         </div>
         <div class="pick-pink">
@@ -25,7 +15,7 @@
           <icon name="exchange" scale="2" class="exchange"></icon>
         </div>
       </div>
-      <Lyric class="lyric" :songid="song.id" :currentTime="currentTime"></Lyric>
+      <lyric class="lyric" :songid="song.id" :currentTime="currentTime"></lyric>
       <div class="control">
         <div class="progress">
           <div class="current-time">
@@ -63,43 +53,23 @@
         </div>
       </div>
     </div>
-    <div class="player-bar" @click="showPlayer(true)" v-show="!show">
-      <div class="wrap">
-        <div class="music-info">
-          <img :src="coverImgUrl">
-          <div class="music-txt">
-            <p class="music-name ellipsis">{{song.name}}</p>
-            <p class="music-singer ellipsis">{{song.singer | concatSinger}}</p>
-          </div>
-        </div>
-        <div class="play-button" @click.stop="isPlay">
-          <icon name="play-circle-o" scale="3" v-show="!playing"></icon>
-          <icon name="pause-circle-o" scale="3" v-show="playing"></icon>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
   import {mapMutations, mapState, mapGetters} from 'vuex'
-  import {Alert, ColorPicker, Actionsheet, TransferDomDirective as TransferDom} from 'vux'
+  import {ColorPicker, Actionsheet} from 'vux'
 
   import Lyric from './Lyric.vue'
 
   export default {
-    directives: {
-      TransferDom
-    },
     components: {
-      Alert,
       ColorPicker,
       Lyric,
       Actionsheet
     },
     data() {
       return {
-        show: false,
         alertShow: false,
         colors: ['#FF3B3B', '#FFEF7D', '#8AEEB1', '#8B8AEE', '#CC68F8', '#fff'],
         color: '',
@@ -108,11 +78,8 @@
       }
     },
     methods: {
-      showPlayer(flag) {
-        //this.$router.push({name: 'player'})
-        if (flag) window.addEventListener('touchmove', this.preventScroll)
-         else window.removeEventListener('touchmove', this.preventScroll)
-         this.show = flag
+      back() {
+        this.$router.go(-1)
       },
       isPlay() {
         if (!this.song.id) {
@@ -127,9 +94,6 @@
       showMenus() {
         this.actionsheetShow = true
       },
-      preventScroll(e) {
-        e.preventDefault()
-      },
       playMV(vid) {
         this.show = false
         this.$router.push({name: 'mv', params: {id: vid}})
@@ -140,9 +104,7 @@
     },
     watch: {
       playing(val) {
-        setTimeout(() => {
-          val ? this.$refs.music.play() : this.$refs.music.pause()
-        }, 0)
+        val ? this.play() : this.pause()
       }
     },
     computed: {
@@ -180,14 +142,11 @@
 </script>
 
 <style lang="less" scoped>
-  .play-control {
+  .player-panel {
     position: fixed;
-    bottom: 0;
+    z-index: 2016;
     width: 100%;
-    z-index: 1994;
-    height: 60px;
-    transition: height .3s;
-    background-color: #fff;
+    height: 100%;
     .bg {
       position: absolute;
       left: -50%;
@@ -196,53 +155,7 @@
       height: 100%;
       filter: blur(10px)
     }
-    .player-bar {
-      position: absolute;
-      color: #F9FAFC;
-      width: 100%;
-      bottom: 0;
-      height: 5rem;
-      overflow: hidden;
-      z-index: 2;
-      background-color: #58B7FF;
-      .wrap {
-        position: absolute;
-        width: 100%;
-        height: 5rem;
-        top: 50%;
-        transform: translateY(-50%);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        .music-info {
-          flex: auto;
-          padding-left: 1rem;
-          display: flex;
-          align-items: center;
-          img {
-            flex: none;
-            width: 4rem;
-            height: 4rem;
-            overflow: hidden;
-          }
-          .music-txt {
-            color: #1F2D3D;
-            padding-left: 1rem;
-            flex: auto;
-            .music-name {
-              font-size: 1.2rem;
-              font-weight: 600;
-            }
-          }
-        }
-        .play-button {
-          width: 4rem;
-          height: 4rem;
-          flex: none;
-        }
-      }
-    }
-    .player-panel {
+    .play-control {
       position: absolute;
       width: 100%;
       display: flex;
@@ -352,9 +265,5 @@
     .filter-enter, .filter-leave-active {
       filter: blur(0px)
     }
-  }
-
-  .play-control.active {
-    height: 100%;
   }
 </style>

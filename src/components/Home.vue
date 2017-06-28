@@ -52,7 +52,7 @@
         TAB_NAME: ['推荐音乐', '热歌榜', '搜索'],
         swiperOption: {
           onTransitionEnd: (swiper) => {
-            document.getElementById('app').scrollTop = 0
+            window.scrollTo(0, 0)
             this.index = swiper.activeIndex
           }
         }

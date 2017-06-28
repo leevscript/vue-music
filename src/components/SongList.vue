@@ -4,9 +4,9 @@
       <div class="bg" :style="{'background-image': `url(${info.picAlbum})`}"></div>
       <div class="gradient"
            :style="{'background-image': `linear-gradient(to bottom, transparent, ${info.color} 80%)`}"></div>
-      <a href="javascript:;" class="back" @click="back">
+      <div class="back" @click.stop="back">
         <icon name="arrow-circle-left" scale="2"></icon>
-      </a>
+      </div>
       <div class="header">
         <div class="info" ref="info">
           <scroll-txt class="title" :distance="100" :txt="info.listName"></scroll-txt>
@@ -25,8 +25,11 @@
       <div class="item" v-for="(item,index) in songlist" :class="{active: item.id === song.id}">
         <div class="no">{{index + 1}}</div>
         <div class="info" @click="play(index)">
-          <h3 class="song-name">{{item.name}}</h3>
-          <p class="singer-name">{{item.singer | concatSinger}}</p>
+          <h3 class="song-name ellipsis">{{item.name}}</h3>
+          <p class="singer-name ellipsis">{{item.singer | concatSinger}}</p>
+        </div>
+        <div class="mv" v-if="item.vid"  @click.stop="playMV(item.vid)">
+          <icon name="video-camera" scale="1"></icon>
         </div>
       </div>
     </div>
@@ -128,6 +131,9 @@
               return {name: v.musicData.songname, singer: v.musicData.singer, id: v.musicData.songid, albummid: v.musicData.albummid,vid: v.vid.Fvid}
             })
           })
+      },
+      playMV(vid) {
+        this.$router.push({name: 'mv', params: {id: vid}})
       }
     },
     filters: {
@@ -139,8 +145,9 @@
       }
     },
     beforeRouteEnter(to, from, next) {
+      window.scrollTo(0, 0)
       next(vm => {
-        switch (to.name) {
+        switch (to.params.type) {
           case 'toplist':
             return vm.getTopSongs()
           case 'cdlist':
@@ -180,9 +187,9 @@
       .back {
         position: fixed;
         color: rgba(255, 255, 255, 0.75);
-        left: 15px;
-        top: 15px;
-        z-index: 2;
+        left: 1rem;
+        top: 1rem;
+        z-index: 5;
       }
       .header {
         position: absolute;
@@ -225,38 +232,38 @@
     .list {
       .item {
         width: 100%;
-        height: 60px;
+        height: 5rem;
         color: #fff;
         display: flex;
+        align-items: center;
+        position: relative;
         .no {
           width: 30px;
           font-size: 1.5rem;
-          line-height: 60px;
           flex: none;
           text-align: right;
           margin-right: 1.5rem;
         }
         .info {
-          height: 60px;
+          height: 5rem;
+          padding-right: 5rem;
           border-bottom: 1px solid rgba(255, 255, 255, .15);
           flex: auto;
-          display: flex;
           position: relative;
+          display: flex;
           flex-direction: column;
           justify-content: center;
           .song-name {
             font-size: 1.5rem;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
           }
           .singer-name {
             font-size: 1.2rem;
             color: rgba(255, 255, 255, .6);
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
           }
+        }
+        .mv {
+          position: absolute;
+          right: 2rem;
         }
       }
       .item.active {
