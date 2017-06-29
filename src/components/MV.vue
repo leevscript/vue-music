@@ -90,12 +90,13 @@
 
 <style lang="less" scoped>
   .mv {
-    color: #F9FAFC;
-    background-color: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.75);
     height: 100%;
-    padding-bottom: 60px;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0, 0, 0);
     .title {
-      background-color: #000;
       height: 5rem;
       position: relative;
       padding-left: 4rem;
@@ -103,7 +104,6 @@
         position: absolute;
         width: 3rem;
         height: 3rem;
-        color: rgba(255, 255, 255, 0.75);
         left: 1rem;
         top: 1rem;
       }

@@ -4,6 +4,7 @@
       <swiper-slide v-for="(item,index) in imgList" :key="index">
         <img :src="item">
       </swiper-slide>
+      <div class="swiper-pagination-white swiper-pagination-position" slot="pagination"></div>
     </swiper>
     <div class="recommend-list">
       <div class="title">
@@ -60,7 +61,9 @@
           autoplay: 3000,
           lazyLoading: true,
           autoplayDisableOnInteraction: false,
-          loop: true
+          loop: true,
+          pagination: '.swiper-pagination-white',
+          paginationClickable: true
         }
       }
     },
@@ -85,6 +88,18 @@
 
 <style lang="less" scoped>
   .recommend {
+    .swiper-pagination-position {
+      position: absolute;
+      z-index: 1;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      .swiper-pagination-bullet {
+        background-color: pink !important;
+      }
+    }
+
+
     .recommend-list {
       .title {
         border-left: 3px solid #58B7FF;

@@ -14,26 +14,15 @@
     name: 'app',
     components: {
       PlayerBar
-    },
-    data() {
-      return {
-        controlShow: false,
-        minHeight: 0
-      }
-    },
-    created() {
-      this.minHeight = window.screen.availHeight + 'px'
     }
   }
 </script>
 
 <style>
   @import "reset.css";
-
-  html, body, #app {
-    height: 100%;
+  #app {
+    padding-bottom: 60px;
   }
-
   /*隐藏文字*/
   .ellipsis {
     display: -webkit-box;

@@ -11,13 +11,13 @@
     <div class="hot-key" v-show="!searching">
       <h3 class="title">热门搜索</h3>
       <div class="content">
-        <div class="item" v-for="item in hotKey" @click="hotClick(item.k)">
+        <div class="item" v-for="item in hotKey" @click="onSubmit(item.k)">
           <span v-text="item.k"></span>
         </div>
       </div>
     </div>
-    <div class="results" v-show="searching">
-      <div class="zhida item" v-if="zhida" @click="goZhida">
+    <div class="results" v-show="resultShow">
+      <div class="zhida item" v-show="zhida.title" @click="goZhida">
         <div class="result-icon">
           <img :src="zhida.img">
         </div>
@@ -38,6 +38,10 @@
           <icon name="video-camera" scale="1"></icon>
         </div>
       </div>
+
+      <load-more
+        :show-loading="showLoading"
+        :tip="loadTip"></load-more>
     </div>
     <div class="history-key" v-show="historyShow">
       <div class="item" v-for="(item,index) in historyKey" :key="index" @click="onSubmit(item)">
@@ -55,41 +59,61 @@
 </template>
 
 <script>
-  import {Search} from 'vux'
+  import {Search, LoadMore} from 'vux'
 
   export default {
     components: {
-      Search
+      Search,
+      LoadMore
     },
     data () {
       return {
-        zhida: null,
+        zhida: {},
         results: [],
         hotKey: [],
         value: '',
         searching: false,
         historyKey: [],
+        showLoading: true,
+        page: 1,
+        pagesize: 15,
+        total: 0,
+        isLoading: false
       }
     },
     computed: {
       historyShow() {
         return this.searching && this.historyKey.length > 0 && !this.value && this.results.length === 0
       },
+      resultShow() {
+        return this.searching && this.results.length > 0
+      },
+      loadTip() {
+        return this.showLoading ? '正在加载' : '加载完毕'
+      }
     },
     methods: {
       onSubmit(val) {
         this.$refs.search.setBlur()
         if (!val) return
+        this.value = val
+        this.searching = true
+        this.zhida = {}
         if (this.historyKey.indexOf(val) === -1) {
           if (this.historyKey.length > 6) this.historyKey.splice(0, 1)
           this.historyKey.push(val)
           window.localStorage.historyKey = JSON.stringify(this.historyKey)
         }
         this.$store
-          .dispatch('search', val)
+          .dispatch('search', {
+            key: this.value,
+            page: this.page,
+            pagesize: this.pagesize
+          })
           .then((ret) => {
             let data = ret.data.data
             let zhida = data.zhida
+            this.total = data.song.totalnum
             if (zhida.type === 1) {
               zhida = zhida.zhida_singer
               this.zhida = {
@@ -110,6 +134,29 @@
             this.results = data.song.list.map(v => {
               return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid, vid: v.mv.vid}
             })
+            this.$nextTick(() => {
+              window.addEventListener('scroll', this.isBottom)
+            })
+          })
+      },
+      loadMore() {
+        window.removeEventListener('scroll', this.isBottom)
+        this.$store
+          .dispatch('search', {
+            key: this.value,
+            page: this.page++,
+            pagesize: this.pagesize
+          })
+          .then((ret) => {
+            let data = ret.data.data
+            if (!data.song.list.length) return this.showLoading = false
+            this.results = this.results.concat(data.song.list.map(v => {
+              return {name: v.name, singer: v.singer, id: v.id, albummid: v.album.mid, vid: v.mv.vid}
+            }))
+            this.$nextTick(() => {
+              this.isLoading = false
+              window.addEventListener('scroll', this.isBottom)
+            })
           })
       },
       playMusic (song) {
@@ -122,13 +169,11 @@
       onFocus () {
         this.searching = true
       },
-      hotClick(val) {
-        this.value = val
-        this.searching = true
-        this.onSubmit(val)
-      },
       onCancel () {
+        this.page = 1
+        this.isLoading = false
         this.searching = false
+        this.showLoading = true
         this.results = []
       },
       clearHistory(index) {
@@ -152,6 +197,12 @@
       playMV(vid) {
         this.show = false
         this.$router.push({name: 'mv', params: {id: vid}})
+      },
+      isBottom() {
+        if (document.body.clientHeight - document.documentElement.clientHeight === document.body.scrollTop && !this.isLoading) {
+          this.isLoading = true
+          setTimeout(this.loadMore, 1000)
+        }
       }
     },
     created() {

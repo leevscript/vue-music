@@ -17,7 +17,7 @@
             <hot></hot>
           </keep-alive>
         </swiper-slide>
-        <swiper-slide class="swiper-item">
+        <swiper-slide class="swiper-item" :style="{'min-height': minHeight}">
           <keep-alive>
             <search></search>
           </keep-alive>
@@ -50,6 +50,7 @@
       return {
         index: 0,
         TAB_NAME: ['推荐音乐', '热歌榜', '搜索'],
+        minHeight: 0,
         swiperOption: {
           onTransitionEnd: (swiper) => {
             window.scrollTo(0, 0)
@@ -69,7 +70,7 @@
       }
     },
     mounted() {
-      this.minHeight = window.screen.availHeight - 104 + 'px'
+      this.minHeight = document.documentElement.clientHeight - 104 + 'px'
     }
   }
 </script>
@@ -96,15 +97,8 @@
       }
     }
     .main {
-      width: 100%;
-      height: 100%;
       .swiper-slide {
         height: 0 !important;
-      }
-      .swiper-container {
-        min-height: 100%;
-        background-color: #EFF2F7;
-        padding-bottom: 60px;
       }
       .swiper-slide.swiper-slide-active {
         height: auto !important;

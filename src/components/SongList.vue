@@ -166,7 +166,6 @@
   .top-list {
     position: relative;
     overflow: hidden;
-    padding-bottom: 60px;
     .album {
       position: relative;
       .bg {

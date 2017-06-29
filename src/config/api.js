@@ -138,11 +138,11 @@ export default {
   },
   search: {
     url: 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp',
-    params: (key) => {
+    params: (option) => {
       return {
         qqmusic_ver: 1298,
         format: 'jsonp',
-        w: key,
+        w: option.key,
         g_tk: 5381,
         loginUin: 0,
         hostUin: 0,
@@ -160,8 +160,8 @@ export default {
         lossless: 0,
         flag_qc: 0,
         remoteplace: 'txt.yqq.center',
-        p: 1,
-        n: 20
+        p: option.page,
+        n: option.pagesize
       }
     },
     jsonp: 'jsonpCallback'
