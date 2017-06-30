@@ -10,7 +10,6 @@ import Test from '../components/test.vue'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   routes: [
     {
       name: 'home',

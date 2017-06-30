@@ -13,7 +13,7 @@
              @play="play">
       </video>
     </div>
-    <div class="bg" :style="{backgroundImage: `url(${info.picurl}`}"></div>
+    <div class="bg" :style="{backgroundImage: info.picurl}"></div>
     <div class="info">
       <div class="description">
         <p v-text="info.desc"></p>
@@ -64,10 +64,11 @@
           .then(ret => {
             let data = ret.data.data
             vm.info.mvname = data.mvname
-            vm.info.picurl = data.picurl
+            vm.info.picurl = `url("${data.picurl}")`
+            console.log(data.picurl)
             vm.info.singer = data.singers
             vm.info.desc = data.desc || '该MV没有描述信息'
-            vm.info.listennum = data.listennum
+            vm.info.listennum = data.listennum || 0
           })
           .then(() => {
             vm.$store
@@ -81,9 +82,6 @@
               })
           })
       })
-    },
-    beforeRouteLeave(to, from, next) {
-      next()
     }
   }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="top-list" :style="{'background-color': info.color}">
     <div class="album">
-      <div class="bg" :style="{'background-image': `url(${info.picAlbum})`}"></div>
+      <div class="bg" :style="{'background-image': info.picAlbum}"></div>
       <div class="gradient"
            :style="{'background-image': `linear-gradient(to bottom, transparent, ${info.color} 80%)`}"></div>
       <div class="back" @click.stop="back">
@@ -79,7 +79,7 @@
           .dispatch('getTopSongs', this.$route.params.id)
           .then(ret => {
             let data = ret.data
-            this.info.picAlbum = data.topinfo.pic_album
+            this.info.picAlbum = `url("${data.topinfo.pic_album}")`
             this.info.listName = data.topinfo.ListName
             this.info.sub = data.update_time + ' 更新'
             this.info.color = $.colorTransform(data.color).hex
