@@ -199,9 +199,9 @@
         this.$router.push({name: 'mv', params: {id: vid}})
       },
       isBottom() {
-        if (document.body.clientHeight - document.documentElement.clientHeight === document.body.scrollTop && !this.isLoading) {
+        if (document.body.clientHeight - document.documentElement.clientHeight - 60 < document.body.scrollTop && !this.isLoading) {
           this.isLoading = true
-          setTimeout(this.loadMore, 1000)
+          setTimeout(this.loadMore, 500)
         }
       }
     },

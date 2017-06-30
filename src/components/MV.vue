@@ -65,7 +65,6 @@
             let data = ret.data.data
             vm.info.mvname = data.mvname
             vm.info.picurl = `url("${data.picurl}")`
-            console.log(data.picurl)
             vm.info.singer = data.singers
             vm.info.desc = data.desc || '该MV没有描述信息'
             vm.info.listennum = data.listennum || 0

@@ -95,7 +95,7 @@
             let data = ret.data.cdlist[0]
             let visitnum = data.visitnum
             visitnum = visitnum > 10000 ? (Math.round(visitnum / 1000)) / 10 + '万' : visitnum
-            this.info.picAlbum = data.logo
+            this.info.picAlbum = `url("${data.logo}")`
             this.info.listName = data.dissname
             this.info.sub = visitnum + ' 次播放'
             this.info.color = '#000'
@@ -109,7 +109,7 @@
           .dispatch('getAlbum', this.$route.params.id)
           .then(ret=>{
             let data = ret.data.data
-            this.info.picAlbum = `https://y.gtimg.cn/music/photo_new/T002R500x500M000${data.mid}.jpg`
+            this.info.picAlbum = `url("https://y.gtimg.cn/music/photo_new/T002R500x500M000${data.mid}.jpg")`
             this.info.listName = data.name
             this.info.sub = `${data.singername} ${data.aDate} ${data.genre}`
             this.info.color = $.colorTransform(data.color).hex
@@ -123,7 +123,7 @@
           .dispatch('getSingerInfo', this.$route.params.id)
           .then(ret=>{
             let data = ret.data.data
-            this.info.picAlbum = `https://y.gtimg.cn/music/photo_new/T001R300x300M000${data.singer_mid}.jpg`
+            this.info.picAlbum = `url("https://y.gtimg.cn/music/photo_new/T001R300x300M000${data.singer_mid}.jpg")`
             this.info.listName = data.singer_name
             this.info.sub = `粉丝 ${data.fans}人`
             this.info.color = $.colorTransform(data.color).hex
